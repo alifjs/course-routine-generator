@@ -5,6 +5,8 @@
 }
 html,body{
     height:100vh;
+}
+body{
     display:flex;
     justify-content: center;
 }
@@ -20,6 +22,7 @@ html,body{
     background-color: #35125c;
     font-size:30px;
     padding:30px 20px 30px 50px;
+    margin-bottom:30px;
     border-radius: 20px;
     color:white;
 }
@@ -49,3 +52,47 @@ input,select{
     color:#35125c;
     transform: translate(0px,7px);
 }
+/*------------individual course div--------------------*/
+.individual_course{
+    /* width:70%;
+    min-width:802px; */
+    display:inline-flex;
+    /* align-items: center; */
+    font-size:30px;
+    padding:0px 0px 0px 20px;/*0px 20px;*/
+    background:grey;
+    border-bottom:10px solid black;
+    border-radius:15px;
+    box-shadow: 0px 10px 30px rgb(128, 128, 128);
+}
+.individual_course p{
+    padding:20px 90px 20px 20px;
+    /*padding-right:90px;*/
+    margin-right:10px;
+    border-right:5px solid black;
+}
+.individual_course p:nth-child(4){
+    border:none;
+    margin:0px;
+    padding-right:0px;
+}
+.dustbin{
+    font-size:50px;
+    margin-left:50px;
+    padding:0px 20px;
+    border-radius:0px 15px 0px 0px;
+    background-color:red;
+}
+img{
+    /* display:none; */
+    visibility: hidden;
+    width:90px;
+    padding:20px 20px 20px 40px;
+    margin-left:50px;
+    border-radius:0px 15px 0px 0px;
+    background-color: rgb(255, 0, 76);
+    color:white;
+    transition:width 3s ease;
+}
+
+
