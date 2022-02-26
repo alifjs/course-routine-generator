@@ -111,3 +111,25 @@ img{
 .individual_course p:nth-child(4){
     width:88px;
 }
+/*----------generate routines button----------*/
+.generate_routines{
+    display:none;
+    flex-direction: row-reverse;
+}
+.generate_routines p{
+    display:inline;
+    font-size:30px;
+    font-weight:500;
+    color:white;
+    border:3px solid black;
+    padding:20px 30px;
+    background:rgb(223, 51, 88);
+    border-radius:40px;
+    cursor: pointer;
+    margin-right:0px;
+}
+.generate_routines p:hover{
+    color:black;
+    transform:translate(0,10px);
+    box-shadow:0px 10px 20px 0px rgb(117, 116, 116);
+}

@@ -33,7 +33,10 @@ function append_the_clone_in_html(clone){
     let br=document.createElement('br')
     let br2=document.createElement('br')
     let parent=document.querySelector('.container')
-    parent.append(clone,br,br2)
+    //parent.append(clone,br,br2)
+    parent.insertBefore(clone,parent.children[parent.children.length-1])
+    parent.insertBefore(br,parent.children[parent.children.length-1])
+    parent.insertBefore(br2,parent.children[parent.children.length-1])
 }
 function does_x_match_the_course(x){
     if(x.name==course.name &&
@@ -43,6 +46,16 @@ function does_x_match_the_course(x){
         return true
     }else{
         return false
+    }
+}
+function show_generate_routines_button(){
+    let generate_routines_button=document.querySelector('.generate_routines')
+    generate_routines_button.style.display='flex'
+}
+function hide_generate_routines_button_if_no_courses_are_there(){
+    if(list_of_courses.length==0){
+        let generate_routines_button=document.querySelector('.generate_routines')
+        generate_routines_button.style.display='none'
     }
 }
 //---------------------------------------------------------------------//
@@ -58,6 +71,7 @@ let add_button=document.querySelector('.add_button')
 let list_of_courses=[]
 
 add_button.addEventListener('click',()=>{
+    show_generate_routines_button()
     let course=create_course_object_from_inputs()
     list_of_courses.push(course)
     //////////////////////////////////////////////////////
@@ -67,9 +81,8 @@ add_button.addEventListener('click',()=>{
     clone.addEventListener('mouseover',show_dustbin)
     clone.addEventListener('mouseout',hide_dustbin)
     append_the_clone_in_html(clone)
-    ///
-    //if the trash is clicked on then delete the component and remove the
-    //course from the list_of_courses
+    /*if the trash is clicked on, then delete the component and remove the
+    course from the list_of_courses*/
     clone.children[4].addEventListener('click',()=>{
         clone.nextElementSibling.remove()
         clone.nextElementSibling.remove()
@@ -84,7 +97,10 @@ add_button.addEventListener('click',()=>{
                 return false
             }
         }),1)
+        hide_generate_routines_button_if_no_courses_are_there()
     })
+    ////////////////////////////////////////////////////////////////
+    
 })
 
 
