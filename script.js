@@ -33,7 +33,6 @@ function append_the_clone_in_html(clone){
     let br=document.createElement('br')
     let br2=document.createElement('br')
     let parent=document.querySelector('.container')
-    //parent.append(clone,br,br2)
     parent.insertBefore(clone,parent.children[parent.children.length-1])
     parent.insertBefore(br,parent.children[parent.children.length-1])
     parent.insertBefore(br2,parent.children[parent.children.length-1])
@@ -63,6 +62,7 @@ function convert_list_of_courses_into_2d_list_of_courses(){
     let two_d_list_of_courses=[]
     for(let i=0;i<list_of_courses.length;i++){
         if(courses_already_added.indexOf(list_of_courses[i].name)==-1){
+            courses_already_added.push(list_of_courses[i].name)
             let list=[list_of_courses[i]]
             for(let j=i+1;j<list_of_courses.length;j++){
                 if(list_of_courses[j].name==list_of_courses[i].name){
@@ -74,27 +74,27 @@ function convert_list_of_courses_into_2d_list_of_courses(){
     }
     return two_d_list_of_courses
 }
-function combinator(list){
+function combinator(list,daddy_list){
     let list3=[]
-    if(list_of_routines.length==0){
+    if(daddy_list.length==0){
         for(let x in list){
             list3.push([list[x]])
         }
         return list3
     }
     for(let x in list){
-        for(let y in list_of_routines){
+        for(let y in daddy_list){
             let list2=[list[x]]
-            list2.push(...list_of_routines[y])
+            list2.push(...daddy_list[y])
             list3.push(list2)
         } 
     }
     return list3
 }
-function convert_2d_list_of_courses_into_list_of_routines(){
+function convert_2d_list_of_courses_into_list_of_routines(two_d_list_of_courses){
     let list=[]
-    for(let i=0;i<list_of_courses.length;i++){//list_of_courses=[['phy102','phy102'],['cse104','cse104'],['mat203','mat203']]
-        list=combinator(list_of_courses[i])
+    for(let i=0;i<two_d_list_of_courses.length;i++){//list_of_courses=[['phy102','phy102'],['cse104','cse104'],['mat203','mat203']]
+        list=combinator(two_d_list_of_courses[i],list)
     }
     return list
 }
@@ -111,7 +111,7 @@ function remove_invalid_routines_and_return(){
                         indexes_to_remove.push(i)
                     }else if(days_of_j.length==1 && days_of_w.indexOf(days_of_j)!=-1 && time_clash==true){//"MW" and "M"
                         indexes_to_remove.push(i)
-                    }else if(days_of_w==days_of_j && timeclash==true){
+                    }else if(days_of_w==days_of_j && time_clash==true){
                         indexes_to_remove.push(i)
                     }
                 }
@@ -125,13 +125,36 @@ function remove_invalid_routines_and_return(){
     })
     return list
 }
+function populate_routine_with_current_routine_index(routine){//['cse104','mat203','phy102']
+    let all_void_boxes=document.querySelectorAll('.void_box p')
+    for(let i=0;i<all_void_boxes.length;i++){
+        all_void_boxes[i].innerHTML=''
+    }
+    for(let x in routine){
+        let class_hour=routine[x].get_class_hour()
+        for(let i=0;i<routine[x].days.length;i++){
+            let box_class_name='.'+routine[x].days[i]+class_hour
+            let first_p_element=document.querySelector(box_class_name)
+            first_p_element.innerHTML=routine[x].name
+            let second_p_element=document.querySelector(box_class_name+':nth-of-type(2)')
+            second_p_element.innerHTML='sec : '+ routine[x].section
+        }
+    }
+}
 //---------------------------------------------------------------------//
 class Course{
     constructor(name,section,days,time){
-        this.name=name
+        this.name=name.toUpperCase()
         this.section=section
         this.days=days
         this.time=time
+    }
+    get_class_hour(){
+        if(this.time=="11:20"){
+            return "11"
+        }else{
+            return this.time.substring(0,1)
+        }
     }
 }
 let add_button=document.querySelector('.add_button')
@@ -170,21 +193,42 @@ add_button.addEventListener('click',()=>{
 /*------------------when the generate routines button is clicked-------------*/
 let generate_routines_button=document.querySelector('.generate_routines')
 let list_of_routines=[]
-// let list_of_routines=[]
-// let index_of_routine_to_display=0
+let current_routine_index=0
 
-/*you have list_of_courses=[...,...,..]
-now convert this into routines=[[...],[...],[..]]
-populate the calendar with the first routine (the first list in routines)
-------------------------------------------------
-as 'less than'/'greater than' is clicked on increment/decrement index_of_routine_to_display
-*/
 generate_routines_button.addEventListener('click',()=>{
-    list_of_courses= convert_list_of_courses_into_2d_list_of_courses()//[['phy102l','phy102l'],['cse104','cse104']]
-    list_of_routines=convert_2d_list_of_courses_into_list_of_routines()
-    list_of_routines=remove_invalid_routines_and_return()
-
+    if(list_of_courses!=0){
+        document.querySelector('.routine_container').style.display='flex'
+        let two_d_list_of_courses= convert_list_of_courses_into_2d_list_of_courses()//[['phy102l','phy102l'],['cse104','cse104']]
+        list_of_routines=convert_2d_list_of_courses_into_list_of_routines(two_d_list_of_courses)
+        list_of_routines=remove_invalid_routines_and_return()
+        populate_routine_with_current_routine_index(list_of_routines[0])
+        let page_num_element=document.querySelector('.routines_navigation p:nth-of-type(2)')
+        page_num_element.innerHTML=' 1/'+list_of_routines.length+' '
+    }
 })
+
+let next_button=document.querySelector('#next_sign')
+next_button.addEventListener('click',()=>{
+    if((current_routine_index+1)<list_of_routines.length){
+        current_routine_index++
+        let page_num_element=document.querySelector('.routines_navigation p:nth-of-type(2)')
+        page_num_element.innerHTML=(current_routine_index+1).toString()
+                                    +'/'+list_of_routines.length+' '
+        populate_routine_with_current_routine_index(list_of_routines[current_routine_index])                            
+    }
+})
+
+let previous_button=document.querySelector('#previous_sign')
+previous_button.addEventListener('click',()=>{
+    if((current_routine_index+1)!=1){
+        current_routine_index--
+        let page_num_element=document.querySelector('.routines_navigation p:nth-of-type(2)')
+        page_num_element.innerHTML=(current_routine_index+1).toString()
+                                    +'/'+list_of_routines.length+' '
+        populate_routine_with_current_routine_index(list_of_routines[current_routine_index])                            
+    }
+})
+
 
 
 
